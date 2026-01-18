@@ -25,6 +25,9 @@ class BorrowRecord {
     {
         if ($this->returnDate) {return false;}
         $today = date('Y-m-d H:i:s');
-        return $today > $this->dueDate;
+        if ($today > $this->dueDate)
+            return true;
+        else
+            return false;
     }
 }
