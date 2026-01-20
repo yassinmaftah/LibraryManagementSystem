@@ -54,4 +54,47 @@ class LibraryService {
             return "Error: " . $e->getMessage();
         }
     }
+
+    public function returnBook($memberId, $isbn) {
+        try {
+            $this->db->beginTransaction();
+
+            $sql = "SELECT br.record_id, br.due_date, br.copy_id 
+                    FROM borrow_records br
+                    JOIN book_copies bc ON br.copy_id = bc.copy_id
+                    WHERE br.member_id = ?
+                    AND bc.isbn = ? AND br.return_date IS NULL LIMIT 1";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$memberId,$isbn]);
+            $record = $stmt->fetch();
+
+            if (!$record)
+                throw new Exception("we don't find any activeties.");
+
+            $fine = 0;
+            $today = date('Y-m-d H:i:s');
+            $dueDate = $record['due_date'];
+            if ($today > $dueDate) {
+                $member = $this->memberRepo->findById($memberId);
+                $dailyFee = $member->getDailyLateFee();
+                $diff = strtotime($today) - strtotime($dueDate);
+                $daysLate = ceil($diff / (60 * 60 * 24));
+                $fine = $daysLate * $dailyFee;
+            }
+
+            $updateRecord = $this->db->prepare("UPDATE borrow_records 
+                SET return_date = ?, fine_amount = ? WHERE record_id = ? ");
+            $updateRecord->execute([$today,$fine,$record['record_id']]);
+
+            $updateCopy = $this->db->prepare("UPDATE book_copies 
+                SET status = 'available' WHERE copy_id = ?");
+            $updateCopy->execute([$record['copy_id']]);
+            $this->db->commit();
+            return "Book returned successfully";
+
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            return "Error: " . $e->getMessage();
+        }
+    }
 }
