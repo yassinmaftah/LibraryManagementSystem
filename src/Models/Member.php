@@ -15,7 +15,14 @@ abstract class Member {
         $this->memberType = $memberType;
         $this->membershipExpiry = $membershipExpiry;
     }
-    abstract public function getLoanDurationDays();
+
+    public function getID() {return $this->id ;}
+    public function getName() {return $this->name ;}
+    public function getEmail() {return $this->email ;}
+    public function getmemberType() {return $this->memberType ;}
+    public function getmembershipExpiry() {return $this->membershipExpiry ;}
+
+    abstract public function LoanDuration();
     abstract public function getMaxBorrowLimit();
     abstract public function getDailyLateFee();
 }
