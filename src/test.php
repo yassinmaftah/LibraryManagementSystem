@@ -3,6 +3,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use App\Repositories\Database;
 use App\Repositories\MemberRepository;
 use App\Repositories\BookRepository;
+use App\Repositories\BorrowRepository;
 use App\Services\LibraryService;
 
 use App\Models\Member;
@@ -54,6 +55,12 @@ else
     echo "We fon't hove Book with this Isbn<br>";
 
 echo "<br>----------------------<br>";
+echo "Test: get Active Borrows for a Member <br>";
+$BorrowRepo = new BorrowRepository();
+$count = $BorrowRepo->getActiveBorrowsCount(1);
+echo $count ;
+
+echo "<br>----------------------<br>";
 echo "Test: Borrowing Logic";
 
 $service = new LibraryService();
@@ -62,7 +69,21 @@ $branchId = 1;
 
 echo "<br>Ahmed Student<br>";
 echo "Result: " . $service->borrowBook(1, 'B1', $branchId) . "<br>";
+echo "<br>Ahmed Student<br>";
+echo "Result: " . $service->borrowBook(1, 'B1', $branchId) . "<br>";
+
+
 echo "<br>Sara Student, has 3 books<br>";
-echo "Result: " . $service->borrowBook(2, 'B1', $branchId) . "<br>";
+echo "Result: " . $service->borrowBook(1, 'B1', $branchId) . "<br>";
 echo "Dr. Yassine (Faculty)<br>";
 echo "Result: " . $service->borrowBook(3, 'B2', $branchId) . "<br>";
+
+
+echo "<br>----------------------<br>";
+echo "Test: Returning a Book<br>";
+
+echo "Action: Ahmed returns 'Clean Code' (B1) <br>";
+echo "Result: " . $service->returnBook(1, 'B1') . "<br>";
+
+echo "Verification Trying to borrow it again...<br>";
+echo "Result: " . $service->borrowBook(1, 'B1', 1) . "<br>";
