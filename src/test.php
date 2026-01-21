@@ -45,11 +45,11 @@ $RepoBook = new BookRepository();
 $book = $RepoBook->findByIsbn("B2");
 if ($book)
 {
-   echo "isbn :" . $book->isbn . "<br>";
-   echo "title :" . $book->title . "<br>";
-   echo "category :" . $book->category . "<br>";
-   echo "publication Year :" . $book->publicationYear . "<br>";
-   echo "totalCopies :" . $book->totalCopies . "<br>";
+   echo "isbn :" . $book->getIsbn() . "<br>";
+   echo "title :" . $book->getTitle() . "<br>";
+   echo "category :" . $book->getCategory() . "<br>";
+   echo "publication Year :" . $book->getPublicationYear() . "<br>";
+   echo "totalCopies :" . $book->getTotalCopies() . "<br>";
 }
 else
     echo "We fon't hove Book with this Isbn<br>";
